@@ -3,6 +3,8 @@
 Suppose you have deployed your application using a deployment controller. Assume the initial number of replicas is one.
 Write the steps needed to update a container's image using deployment, making sure that there is zero downtime.
 
+When the type "Deployment" is used, k8s makes sure that the defined number of replicas is be kept running (the old version) until new version is provisioned and up.
+
 To perform rolling update to v2 of "kubia" do:
 ```sh
 kubectl apply -f v1.yaml
@@ -34,8 +36,7 @@ The old pod is kept, while 3 new (with container created from the new version of
 ```sh
 kubectl get po
 ```
-After provisioning is done, above shows 3 pods kubia (v3)
-Where the type "Deployment" makes sure that the defined number of replicas will be kept running (the old version) until the new version is provisioned and up.
+After provisioning is done, above shows 3 pods kubia (v3).
 
 
 Configuration (yaml) files used in above steps:
