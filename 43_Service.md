@@ -33,15 +33,15 @@ kubia-wths4   1/1     Running   0          3m26s   192.168.137.137   ip-172-31-1
 kubia-z5lxx   1/1     Running   0          3m26s   192.168.137.145   ip-172-31-11-169.ap-southeast-1.compute.internal   <none>           <none>
 [root@ip-172-31-4-106 05-services]#
 
-# Locally exposed port (8080) works with pod's IP:
+# Locally exposed port (8080) works with pod\'s IP:
 [root@ip-172-31-4-106 05-services]# curl 192.168.137.154:8080
-You've hit kubia-vlhzf
+You\'ve hit kubia-vlhzf
 
-# NodePort does not work with pod's IP:
+# NodePort does not work with pod\'s IP:
 [root@ip-172-31-4-106 05-services]# curl 192.168.137.154:30123
 curl: (7) Failed to connect to 192.168.137.154 port 30123 after 0 ms: Connection refused
 
-# NodePort works with host's IP:
+# NodePort works with host\'s IP:
 [root@ip-172-31-4-106 05-services]# curl 172.31.4.106:30123
-You've hit kubia-z5lxx
+You\'ve hit kubia-z5lxx
 ```
