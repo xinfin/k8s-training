@@ -23,7 +23,7 @@ spec:
     app: kubia
 ```
 
-NodePort exposes application to host - therefore localhost:nodeport socket will not work, but publicip:nodeport socket will.
+NodePort exposes application to host - therefore "pod's IP":nodeport socket will not work, but "host's IP":nodeport socket will.
 ```sh
 
 [root@ip-172-31-4-106 05-services]# kx get po -o wide
