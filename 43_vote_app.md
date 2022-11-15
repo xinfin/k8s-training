@@ -1,5 +1,6 @@
 # Vote app demo
 
+1. Commands that you used during the assignment
 ```sh
 [root@ip-172-31-6-142 ~]# cd example-voting-app/
 [root@ip-172-31-6-142 example-voting-app]# l
@@ -40,3 +41,137 @@ alias kx='kubectl --kubeconfig=/root/.kube/xconf'
     namespace: xinfin
 [root@ip-172-31-6-142 example-voting-app]#
 ```
+
+2. snapshot of logs (wherever possible)
+```db-log
+[root@ip-172-31-6-142 example-voting-app]# kx logs db-b54cd94f4-vm5tf
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+creating configuration files ... ok
+creating template1 database in /var/lib/postgresql/data/base/1 ... ok
+initializing pg_authid ... ok
+setting password ... ok
+initializing dependencies ... ok
+creating system views ... ok
+loading system objects' descriptions ... ok
+creating collations ... ok
+creating conversions ... ok
+creating dictionaries ... ok
+setting privileges on built-in objects ... ok
+creating information schema ... ok
+loading PL/pgSQL server-side language ... ok
+vacuuming database template1 ... ok
+copying template1 to template0 ... ok
+copying template1 to postgres ... ok
+syncing data to disk ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    postgres -D /var/lib/postgresql/data
+or
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+****************************************************
+WARNING: No password has been set for the database.
+         This will allow anyone with access to the
+         Postgres port to access your database. In
+         Docker's default configuration, this is
+         effectively any other container on the same
+         system.
+
+         Use "-e POSTGRES_PASSWORD=password" to set
+         it in "docker run".
+****************************************************
+waiting for server to start....LOG:  database system was shut down at 2022-11-15 10:48:42 UTC
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+ done
+server started
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+LOG:  received fast shutdown request
+LOG:  aborting any active transactions
+LOG:  autovacuum launcher shutting down
+LOG:  shutting down
+waiting for server to shut down....LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+LOG:  database system was shut down at 2022-11-15 10:48:43 UTC
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+ERROR:  relation "votes" does not exist at character 38
+STATEMENT:  SELECT vote, COUNT(id) AS count FROM votes GROUP BY vote
+```
+```redis
+[root@ip-172-31-6-142 example-voting-app]# kx logs redis-868d64d78-5swpf
+1:C 15 Nov 2022 10:48:38.676 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 15 Nov 2022 10:48:38.676 # Redis version=7.0.5, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 15 Nov 2022 10:48:38.676 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+1:M 15 Nov 2022 10:48:38.676 * monotonic clock: POSIX clock_gettime
+1:M 15 Nov 2022 10:48:38.678 * Running mode=standalone, port=6379.
+1:M 15 Nov 2022 10:48:38.685 # Server initialized
+1:M 15 Nov 2022 10:48:38.685 # WARNING Your system is configured to use the 'xen' clocksource which might lead to degraded performance. Check the result of the [slow-clocksource] system check: run 'redis-server --check-system' to check if the system's clocksource isn't degrading performance.
+1:M 15 Nov 2022 10:48:38.685 * Ready to accept connections
+```
+```result
+[root@ip-172-31-6-142 example-voting-app]# kx logs result-5d57b59f4b-d2bzf
+Tue, 15 Nov 2022 10:48:41 GMT body-parser deprecated bodyParser: use individual json/urlencoded middlewares at server.js:67:9
+Tue, 15 Nov 2022 10:48:41 GMT body-parser deprecated undefined extended: provide extended option at ../node_modules/body-parser/index.js:105:29
+App running on port 80
+Waiting for db
+Waiting for db
+Waiting for db
+Waiting for db
+Connected to db
+Error performing query: error: relation "votes" does not exist
+```
+```vote
+[root@ip-172-31-6-142 example-voting-app]# kx logs vote-94849dc97-h5m66
+[2022-11-15 10:48:40 +0000] [1] [INFO] Starting gunicorn 19.6.0
+[2022-11-15 10:48:40 +0000] [1] [INFO] Listening at: http://0.0.0.0:80 (1)
+[2022-11-15 10:48:40 +0000] [1] [INFO] Using worker: sync
+[2022-11-15 10:48:40 +0000] [11] [INFO] Booting worker with pid: 11
+[2022-11-15 10:48:40 +0000] [12] [INFO] Booting worker with pid: 12
+[2022-11-15 10:48:40 +0000] [14] [INFO] Booting worker with pid: 14
+[2022-11-15 10:48:40 +0000] [16] [INFO] Booting worker with pid: 16
+```
+```worker
+[root@ip-172-31-6-142 example-voting-app]# kx logs worker-dd46d7584-smc9m 
+Waiting for db
+Waiting for db
+Waiting for db
+Connected to db
+Found redis at 10.105.151.229
+Connecting to redis
+```
+
+3. your comment on WHY result app STOPPED working after db pod stop
+
+The does not stop working, because the pod is replaced by a new one without loss of service. Only data are lost from the database, therefore the result app is defaulted to 50/50 - no votes.
+
+4. your answer to HOW YOU MADE THE RESULT POD work
+
+
+5. Some jargons (just names are enough- dont need sentences) that you learnt from the 40-hour Training session
+Just some tags: #Image #Container #API #etcd #ConfigurationManagement #DataStore #KeyValueStore #Kubelet #Pod #Namespace #NodePort #clusterIP #ReplicaSet #DaemonSet #Taint #Toleration #SEP/ep #Scheduler #Node
