@@ -168,10 +168,10 @@ Connecting to redis
 
 3. your comment on WHY result app STOPPED working after db pod stop
 
-The does not stop working, because the pod is replaced by a new one without loss of service. Only data are lost from the database, therefore the result app is defaulted to 50/50 - no votes.
+Result pod is recreated by the scheduler. Only data are lost from the database because the datastore of the db was stored locally in the pod which was destroyed, therefore the result app is defaulted to 50/50 - no votes.
 
 4. your answer to HOW YOU MADE THE RESULT POD work
-
+The result pod resumes working when db pod is recreated by the scheduler.
 
 5. Some jargons (just names are enough- dont need sentences) that you learnt from the 40-hour Training session
 Just some tags: #Image #Container #API #etcd #ConfigurationManagement #DataStore #KeyValueStore #Kubelet #Pod #Namespace #NodePort #clusterIP #ReplicaSet #DaemonSet #Taint #Toleration #SEP/ep #Scheduler #Node
